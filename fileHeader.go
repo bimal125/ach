@@ -331,14 +331,23 @@ func (fh *FileHeader) ImmediateDestinationField() string {
 
 // ImmediateOriginField gets the immediate origin number with 0 padding
 func (fh *FileHeader) ImmediateOriginField() string {
+	// If empty, return 10 spaces
 	if fh.ImmediateOrigin == "" {
 		return strings.Repeat(" ", 10)
 	}
+
+	// Trim surrounding whitespace only
 	fh.ImmediateOrigin = strings.TrimSpace(fh.ImmediateOrigin)
-	if fh.validateOpts != nil && fh.validateOpts.BypassOriginValidation && len(fh.ImmediateOrigin) == 10 {
+
+	// If validation is bypassed and already 10 chars, return as-is
+	if fh.validateOpts != nil &&
+		fh.validateOpts.BypassOriginValidation &&
+		len(fh.ImmediateOrigin) == 10 {
 		return fh.ImmediateOrigin
 	}
-	return " " + fh.stringField(fh.ImmediateOrigin, 9)
+
+	// Return full value padded or trimmed to 10 characters
+	return fh.stringField(fh.ImmediateOrigin, 10)
 }
 
 // FileCreationDateField gets the file creation date in YYMMDD (year, month, day) format
